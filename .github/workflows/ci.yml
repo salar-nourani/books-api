@@ -9,6 +9,7 @@ on:
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -17,7 +18,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.25'
-          cache: true # این خط باعث می‌شود پکیج‌ها کش شوند و بیلد سریع‌تر شود
+          cache: true
 
       - name: Verify dependencies
         run: go mod verify
@@ -28,13 +29,28 @@ jobs:
       - name: Build Binary
         run: make build || go build -o bin/books-api ./cmd/api/main.go
 
-  docker-check:
+  docker:
     needs: test-and-build
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Docker Image
-        run: docker build -t books-api:latest .
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Docker image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:latest
+          docker build -t $IMAGE_NAME .
+
+      - name: Push Docker image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:latest
+          docker push $IMAGE_NAME
 
