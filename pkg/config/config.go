@@ -7,16 +7,26 @@ import (
 )
 
 type Config struct {
-	Port string
+	Port   string
+	DBURL  string 
 }
 
 func Load() *Config {
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("Warning: .env file not found")
+		log.Println("Warning: .env file not found, using system environment variables")
 	}
+
 	return &Config{
-		Port: os.Getenv("PORT"),
+		Port:  getEnv("PORT", "8080"),   
+		DBURL: getEnv("DB_URL", ""),      
 	}
+}
+
+func getEnv(key, fallback string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return fallback
 }
 
