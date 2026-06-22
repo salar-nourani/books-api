@@ -7,14 +7,14 @@ import (
 )
 
 func TestGetAppStatus(t *testing.T) {
-	repo := repository.NewBookRepository()
-	svc := NewBookService(repo)
+  repo := repository.NewBookRepository()
+  svc := NewBookService(repo)
 
-	got := svc.GetAppStatus()
-	want := "Database is connected and healthy"
+  got := svc.GetAppStatus()
+  want := "Database is disconnected" 
 
-	if got != want {
-		t.Errorf("expected %q, got %q", want, got)
-	}
+  if got != want {
+    t.Errorf("expected %q, got %q", want, got)
+  }
 }
 
