@@ -18,7 +18,7 @@ func main() {
 	hdl := handler.NewBookHandler(svc)
 
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		loggers.Info().Msg("Health check endpoint hit")
+		logger.Info().Msg("Health check endpoint hit")
 		w.Write([]byte("OK"))
 	})
 
